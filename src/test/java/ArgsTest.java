@@ -97,6 +97,9 @@ public class ArgsTest {
             if ((optionIndex + 1) >= args.size()) {
                 throw new IllegalArgumentException(optionName + "expect to get a value");
             }
+            if ((optionIndex + 2) < args.size() && !args.get(optionIndex + 2).startsWith("-")) {
+                throw new IllegalArgumentException(optionName + "expect single value");
+            }
             return transfer.apply(args.get(optionIndex + 1));
         }
 
