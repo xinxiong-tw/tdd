@@ -73,6 +73,13 @@ public class ArgsTest {
                     String optionValue = args[optionIndex + 1];
                     return Integer.parseInt(optionValue);
                 }
+                if (optionType == String.class) {
+                    if ((optionIndex + 1) >= args.length) {
+                        throw new IllegalArgumentException(optionName + "expect to get a value");
+                    }
+                    String optionValue = args[optionIndex + 1];
+                    return optionValue;
+                }
                 if (optionType == boolean.class) {
                     return optionIndex != -1;
                 }
