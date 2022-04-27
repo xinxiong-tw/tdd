@@ -1,8 +1,10 @@
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,37 +61,39 @@ public class ArgsTest {
     }
 
     private static class Args {
-        public static <T> T parse(Class<T> optionsClass, String... args) {
+        public static <T> T parse(Class<T> optionsClass, String ...args) {
             Constructor<?> constructor = optionsClass.getDeclaredConstructors()[0];
-            Object[] params = Arrays.stream(constructor.getParameters()).map(parameter -> {
-                Option option = parameter.getAnnotation(Option.class);
-                String optionName = "-" + option.value();
-                Class<?> optionType = parameter.getType();
-                int optionIndex = Arrays.stream(args).toList().indexOf(optionName);
-                if (optionType == int.class) {
-                    if ((optionIndex + 1) >= args.length) {
-                        throw new IllegalArgumentException(optionName + "expect to get a value");
-                    }
-                    String optionValue = args[optionIndex + 1];
-                    return Integer.parseInt(optionValue);
-                }
-                if (optionType == String.class) {
-                    if ((optionIndex + 1) >= args.length) {
-                        throw new IllegalArgumentException(optionName + "expect to get a value");
-                    }
-                    String optionValue = args[optionIndex + 1];
-                    return optionValue;
-                }
-                if (optionType == boolean.class) {
-                    return optionIndex != -1;
-                }
-                throw new UnsupportedOperationException("unsupported for type " + optionType);
-            }).toArray();
+            Object[] params = Arrays.stream(constructor.getParameters()).map(parameter -> parseOption(parameter, List.of(args))).toArray();
             try {
                 return (T) constructor.newInstance(params);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
+
+        private static Object parseOption(Parameter parameter, List<String> args) {
+            Class<?> optionType = parameter.getType();
+            Option option = parameter.getAnnotation(Option.class);
+            String optionName = "-" + option.value();
+            if (optionType == int.class) {
+                return parseSingleValueWith(args, optionName, Integer::parseInt);
+            }
+            if (optionType == String.class) {
+                return parseSingleValueWith(args, optionName, Function.identity());
+            }
+            if (optionType == boolean.class) {
+                return args.contains(optionName);
+            }
+            throw new UnsupportedOperationException("unsupported for type " + optionType);
+        }
+
+        private static <T> T parseSingleValueWith(List<String> args, String optionName, Function<String, T> transfer) {
+            int optionIndex = args.indexOf(optionName);
+            if ((optionIndex + 1) >= args.size()) {
+                throw new IllegalArgumentException(optionName + "expect to get a value");
+            }
+            return transfer.apply(args.get(optionIndex + 1));
+        }
+
     }
 }
