@@ -57,6 +57,9 @@ public class ArgsTest {
                 Class<?> optionType = parameter.getType();
                 int optionIndex = Arrays.stream(args).toList().indexOf(optionName);
                 if (optionType == int.class) {
+                    if ((optionIndex + 1) >= args.length) {
+                        throw new IllegalArgumentException(optionName + "expect to get a value");
+                    }
                     String optionValue = args[optionIndex + 1];
                     return Integer.parseInt(optionValue);
                 }
