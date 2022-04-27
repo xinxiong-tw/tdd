@@ -109,13 +109,19 @@ public class ArgsTest {
 
         private static <T> T parseSingleValueWith(List<String> args, String optionName, Function<String, T> transfer) {
             int optionIndex = args.indexOf(optionName);
-            if ((optionIndex + 1) >= args.size() || args.get(optionIndex + 1).startsWith("-")) {
+            int valueIndex = optionIndex + 1;
+            if (valueIndex >= args.size() || isValue(args, valueIndex)) {
                 throw new IllegalArgumentException(optionName + "expect to get a value");
             }
-            if ((optionIndex + 2) < args.size() && !args.get(optionIndex + 2).startsWith("-")) {
+            int nextOptionIndex = optionIndex + 2;
+            if (nextOptionIndex < args.size() && !isValue(args, nextOptionIndex)) {
                 throw new IllegalArgumentException(optionName + "expect single value");
             }
-            return transfer.apply(args.get(optionIndex + 1));
+            return transfer.apply(args.get(valueIndex));
+        }
+
+        private static boolean isValue(List<String> args, int valueIndex) {
+            return args.get(valueIndex).startsWith("-");
         }
 
     }
