@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 public class ArgsTest {
     // -l -p 8080 -d /usr/logs
     @Test
@@ -20,7 +22,8 @@ public class ArgsTest {
 
     private static class Args {
         public static BoolOptions parse(Class<BoolOptions> optionsClass, String... args) {
-            return new BoolOptions(true);
+            boolean logging = Arrays.asList(args).contains("-l");
+            return new BoolOptions(logging);
         }
     }
 }
