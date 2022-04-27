@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,17 +27,17 @@ public class ArgsTest {
         assertFalse(options.isVerbose());
     }
 
+    record BoolOptions(@Option("l") boolean logging) {
+    }
+
+    record BoolOptionV(@Option("v") boolean isVerbose) {
+    }
+
     // single int
     @Test
     public void should_return_8080_while_give_port() {
         IntOption option = Args.parse(IntOption.class, "-p", "8080");
         assertEquals(option.port(), 8080);
-    }
-
-    record BoolOptions(@Option("l") boolean logging) {
-    }
-
-    record BoolOptionV(@Option("v") boolean isVerbose) {
     }
 
     record IntOption(@Option("p") int port) {
@@ -45,11 +46,20 @@ public class ArgsTest {
     private static class Args {
         public static <T> T parse(Class<T> optionsClass, String... args) {
             Constructor<?> constructor = optionsClass.getDeclaredConstructors()[0];
-            Boolean[] params = Arrays.stream(constructor.getParameters()).map(parameter -> {
+            Object[] params = Arrays.stream(constructor.getParameters()).map(parameter -> {
                 Option option = parameter.getAnnotation(Option.class);
-                String optionName = option.value();
-                return !Arrays.stream(args).filter(arg -> arg.equals("-" + optionName)).findFirst().map(String::isEmpty).orElse(true);
-            }).toArray(Boolean[]::new);
+                String optionName = "-" + option.value();
+                Class<?> optionType = parameter.getType();
+                int optionIndex = Arrays.stream(args).toList().indexOf(optionName);
+                if (optionType == int.class) {
+                    String optionValue = args[optionIndex + 1];
+                    return Integer.parseInt(optionValue);
+                }
+                if (optionType == boolean.class) {
+                    return optionIndex != -1;
+                }
+                throw new UnsupportedOperationException("unsupported for type " + optionType);
+            }).toArray();
             try {
                 return (T) constructor.newInstance(params);
             } catch (Exception e) {
