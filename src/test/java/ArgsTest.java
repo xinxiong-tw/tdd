@@ -40,6 +40,11 @@ public class ArgsTest {
         assertEquals(option.port(), 8080);
     }
 
+    @Test
+    public void should_throw_error_while_no_value() {
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(IntOption.class, "-p"));
+    }
+
     record IntOption(@Option("p") int port) {
     }
 
