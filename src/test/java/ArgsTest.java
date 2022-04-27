@@ -48,6 +48,11 @@ public class ArgsTest {
     }
 
     @Test
+    public void should_throw_error_while_no_value_2() {
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(IntOption.class, "-p", "-l"));
+    }
+
+    @Test
     public void should_throw_error_while_extra_value() {
         assertThrows(IllegalArgumentException.class, () -> Args.parse(IntOption.class, "-p", "8080", "8888"));
     }
