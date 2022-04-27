@@ -109,7 +109,7 @@ public class ArgsTest {
 
         private static <T> T parseSingleValueWith(List<String> args, String optionName, Function<String, T> transfer) {
             int optionIndex = args.indexOf(optionName);
-            if ((optionIndex + 1) >= args.size()) {
+            if ((optionIndex + 1) >= args.size() || args.get(optionIndex + 1).startsWith("-")) {
                 throw new IllegalArgumentException(optionName + "expect to get a value");
             }
             if ((optionIndex + 2) < args.size() && !args.get(optionIndex + 2).startsWith("-")) {
