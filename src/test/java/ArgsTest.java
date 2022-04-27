@@ -47,6 +47,11 @@ public class ArgsTest {
         assertThrows(IllegalArgumentException.class, () -> Args.parse(IntOption.class, "-p"));
     }
 
+    @Test
+    public void should_throw_error_while_extra_value() {
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(IntOption.class, "-p", "8080", "8888"));
+    }
+
     record IntOption(@Option("p") int port) {
     }
 
