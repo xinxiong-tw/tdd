@@ -48,6 +48,16 @@ public class ArgsTest {
     record IntOption(@Option("p") int port) {
     }
 
+    // single string
+    @Test
+    public void should_return_log_file_path_while_give_directory() {
+        StringOption option = Args.parse(StringOption.class, "-d", "/usr/logs");
+        assertEquals(option.directory(), "/usr/logs");
+    }
+
+    record StringOption(@Option("d") String directory) {
+    }
+
     private static class Args {
         public static <T> T parse(Class<T> optionsClass, String... args) {
             Constructor<?> constructor = optionsClass.getDeclaredConstructors()[0];
