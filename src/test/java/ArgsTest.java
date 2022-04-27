@@ -67,6 +67,16 @@ public class ArgsTest {
         assertEquals(option.directory(), "/usr/logs");
     }
 
+    @Test
+    public void should_throw_error_while_no_value_for_directory() {
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(StringOption.class, "-d", "-p", "8080"));
+    }
+
+    @Test
+    public void should_throw_error_while_no_value_for_directory_2() {
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(StringOption.class, "-d", "-l"));
+    }
+
     record StringOption(@Option("d") String directory) {
     }
 
