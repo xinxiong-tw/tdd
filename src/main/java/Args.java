@@ -22,10 +22,10 @@ class Args {
         String optionName = "-" + option.value();
         OptionParser<?> parser = null;
         if (optionType == int.class) {
-            parser = new SingleValueOptionParser<>(Integer::parseInt);
+            parser = new SingleValueOptionParser<>(Integer::parseInt, 0);
         }
         if (optionType == String.class) {
-            parser = new SingleValueOptionParser<>(Function.identity());
+            parser = new SingleValueOptionParser<>(Function.identity(), "");
         }
         if (optionType == boolean.class) {
             parser = new BoolOptionParser();
