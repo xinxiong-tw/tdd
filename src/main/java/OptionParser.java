@@ -31,11 +31,11 @@ public interface OptionParser<T> {
         return Optional.of(optionRawValues);
     }
 
-    static OptionParser<Boolean> boolParser() {
+    static OptionParser<Boolean> bool() {
         return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 0).isPresent();
     }
 
-    static <T> OptionParser<T> singleParse(T defaultValue, Function<String, T> parser) {
+    static <T> OptionParser<T> unary(T defaultValue, Function<String, T> parser) {
         return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 1)
                 .map(values -> parser.apply(values.get(0)))
                 .orElse(defaultValue);
