@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 public interface OptionParser<T> {
@@ -15,7 +16,7 @@ public interface OptionParser<T> {
                 .orElse(arguments.size()));
     }
 
-    static Optional<List<String>> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
+    private static Optional<List<String>> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
         int optionIndex = arguments.indexOf(optionName);
         if (optionIndex == -1) {
             return Optional.empty();
@@ -28,6 +29,16 @@ public interface OptionParser<T> {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
         }
         return Optional.of(optionRawValues);
+    }
+
+    static OptionParser<Boolean> boolParser() {
+        return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 0).isPresent();
+    }
+
+    static <T> OptionParser<T> singleParse(T defaultValue, Function<String, T> parser) {
+        return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 1)
+                .map(values -> parser.apply(values.get(0)))
+                .orElse(defaultValue);
     }
 
     T parse(List<String> arguments, String optionName);

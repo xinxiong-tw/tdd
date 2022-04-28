@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BoolOptionParserTest {
 
-    private final BoolOptionParser parser = new BoolOptionParser();
+    private final OptionParser<Boolean> parser = OptionParser.boolParser();
 
     // single bool
     @Test
