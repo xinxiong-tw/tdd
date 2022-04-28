@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 class SingleValueOptionParser<T> implements OptionParser<T> {
@@ -13,12 +14,9 @@ class SingleValueOptionParser<T> implements OptionParser<T> {
 
     @Override
     public T parse(List<String> arguments, String optionName) {
-        int optionIndex = arguments.indexOf(optionName);
-        if (optionIndex == -1) {
-            return defaultValue;
-        }
-        List<String> optionRawValues = OptionParser.getAndCheckValueCount(arguments, optionName, 1);
-        return parser.apply(optionRawValues.get(0));
+        return OptionParser.getAndCheckValueCount(arguments, optionName, 1)
+                .map(values -> parser.apply(values.get(0)))
+                .orElse(defaultValue);
     }
 
 }

@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 public interface OptionParser<T> {
@@ -14,8 +15,11 @@ public interface OptionParser<T> {
                 .orElse(arguments.size()));
     }
 
-    static List<String> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
+    static Optional<List<String>> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
         int optionIndex = arguments.indexOf(optionName);
+        if (optionIndex == -1) {
+            return Optional.empty();
+        }
         List<String> optionRawValues = OptionParser.getOptionRawValues(arguments, optionIndex + 1);
         if (optionRawValues.size() < valueCount) {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
@@ -23,7 +27,7 @@ public interface OptionParser<T> {
         if (optionRawValues.size() > valueCount) {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
         }
-        return optionRawValues;
+        return Optional.of(optionRawValues);
     }
 
     T parse(List<String> arguments, String optionName);
