@@ -6,7 +6,7 @@ class BoolOptionParser implements OptionParser<Boolean> {
         if (optionIndex == -1) {
             return false;
         }
-        if (optionIndex + 1 < arguments.size() && !OptionParser.isValue(arguments, optionIndex + 1)) {
+        if (optionIndex + 1 < arguments.size() && !OptionParser.isValueAt(arguments, optionIndex + 1)) {
             throw new IllegalArgumentException("expect no value after bool option " + optionName);
         }
         return true;

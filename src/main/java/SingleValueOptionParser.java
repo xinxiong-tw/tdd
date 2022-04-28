@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 class SingleValueOptionParser<T> implements OptionParser<T> {
 
@@ -14,17 +15,24 @@ class SingleValueOptionParser<T> implements OptionParser<T> {
     @Override
     public T parse(List<String> arguments, String optionName) {
         int optionIndex = arguments.indexOf(optionName);
-        int valueIndex = optionIndex + 1;
         if (optionIndex == -1) {
             return defaultValue;
         }
-        if (valueIndex >= arguments.size() || OptionParser.isValue(arguments, valueIndex)) {
+        int valueIndex = optionIndex + 1;
+        List<String> optionRawValues = getOptionRawValues(arguments, valueIndex);
+        if (optionRawValues.size() < 1) {
             throw new IllegalArgumentException(optionName + "expect to get a value");
         }
-        int nextOptionIndex = optionIndex + 2;
-        if (nextOptionIndex < arguments.size() && !OptionParser.isValue(arguments, nextOptionIndex)) {
+        if (optionRawValues.size() > 1) {
             throw new IllegalArgumentException(optionName + "expect single value");
         }
-        return parser.apply(arguments.get(valueIndex));
+        return parser.apply(optionRawValues.get(0));
+    }
+
+    private List<String> getOptionRawValues(List<String> arguments, int valueIndex) {
+        return arguments.subList(valueIndex, IntStream.range(valueIndex, arguments.size())
+                .filter(index -> OptionParser.isOption(arguments.get(index)))
+                .findFirst()
+                .orElse(arguments.size()));
     }
 }
