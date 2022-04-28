@@ -6,10 +6,7 @@ class BoolOptionParser implements OptionParser<Boolean> {
         if (optionIndex == -1) {
             return false;
         }
-        List<String> optionRawValues = OptionParser.getOptionRawValues(arguments, optionIndex + 1);
-        if (!optionRawValues.isEmpty()) {
-            throw new IllegalArgumentException("expect no value after bool option " + optionName);
-        }
+        OptionParser.getAndCheckValueCount(arguments, optionName, 0);
         return true;
     }
 }

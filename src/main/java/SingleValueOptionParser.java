@@ -17,14 +17,7 @@ class SingleValueOptionParser<T> implements OptionParser<T> {
         if (optionIndex == -1) {
             return defaultValue;
         }
-        int valueIndex = optionIndex + 1;
-        List<String> optionRawValues = OptionParser.getOptionRawValues(arguments, valueIndex);
-        if (optionRawValues.size() < 1) {
-            throw new IllegalArgumentException(optionName + "expect to get a value");
-        }
-        if (optionRawValues.size() > 1) {
-            throw new IllegalArgumentException(optionName + "expect single value");
-        }
+        List<String> optionRawValues = OptionParser.getAndCheckValueCount(arguments, optionName, 1);
         return parser.apply(optionRawValues.get(0));
     }
 

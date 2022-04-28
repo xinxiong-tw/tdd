@@ -7,11 +7,23 @@ public interface OptionParser<T> {
         return arg.startsWith("-");
     }
 
-    static List<String> getOptionRawValues(List<String> arguments, int valueIndex) {
+    private static List<String> getOptionRawValues(List<String> arguments, int valueIndex) {
         return arguments.subList(valueIndex, IntStream.range(valueIndex, arguments.size())
                 .filter(index -> isOption(arguments.get(index)))
                 .findFirst()
                 .orElse(arguments.size()));
+    }
+
+    static List<String> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
+        int optionIndex = arguments.indexOf(optionName);
+        List<String> optionRawValues = OptionParser.getOptionRawValues(arguments, optionIndex + 1);
+        if (optionRawValues.size() < valueCount) {
+            throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
+        }
+        if (optionRawValues.size() > valueCount) {
+            throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
+        }
+        return optionRawValues;
     }
 
     T parse(List<String> arguments, String optionName);
