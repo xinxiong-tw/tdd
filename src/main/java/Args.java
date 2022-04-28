@@ -2,6 +2,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -20,19 +21,20 @@ class Args {
         Class<?> optionType = parameter.getType();
         Option option = parameter.getAnnotation(Option.class);
         String optionName = "-" + option.value();
-        OptionParser<?> parser = null;
-        if (optionType == int.class) {
-            parser = new SingleValueOptionParser<>(0, Integer::parseInt);
-        }
-        if (optionType == String.class) {
-            parser = new SingleValueOptionParser<>("", Function.identity());
-        }
-        if (optionType == boolean.class) {
-            parser = new BoolOptionParser();
-        }
+        OptionParser<?> parser = getOptionParser(optionType);
         return Optional.ofNullable(parser)
                 .map(p -> p.parse(args, optionName))
                 .orElseThrow(UnsupportedOperationException::new);
+    }
+
+    private static final Map<Class<?>, OptionParser<?>> PARSERS = Map.of(
+            int.class, new SingleValueOptionParser<>(0, Integer::parseInt),
+            String.class, new SingleValueOptionParser<>("", Function.identity()),
+            boolean.class, new BoolOptionParser()
+    );
+
+    private static OptionParser<?> getOptionParser(Class<?> optionType) {
+        return PARSERS.get(optionType);
     }
 
 }
