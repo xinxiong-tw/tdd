@@ -29,9 +29,4 @@ class BoolOptionParserTest {
         assertThrows(IllegalArgumentException.class, () -> parser.parse(List.of("-l", "p"), "-l"));
     }
 
-    record BoolOptions(@Option("l") boolean logging) {
-    }
-
-    record BoolOptionV(@Option("v") boolean isVerbose) {
-    }
 }

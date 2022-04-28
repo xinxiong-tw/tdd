@@ -1,7 +1,8 @@
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
-import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,9 +17,10 @@ class SingleValueOptionParserTest {
         assertEquals(intOptionParser.parse(List.of("-p", "8080"), "-p"), 8080);
     }
 
-    @Test
-    public void should_throw_error_while_no_value() {
-        assertThrows(IllegalArgumentException.class, () -> intOptionParser.parse(List.of("-p"), "-p"));
+    @ParameterizedTest
+    @ValueSource(strings = {"-p -l", "-p"})
+    public void should_throw_error_while_no_value(String arguments) {
+        assertThrows(IllegalArgumentException.class, () -> intOptionParser.parse(List.of(arguments.split(" ")), "-p"));
     }
 
     @Test
