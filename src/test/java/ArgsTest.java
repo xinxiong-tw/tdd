@@ -1,11 +1,5 @@
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArgsTest {
@@ -80,49 +74,4 @@ public class ArgsTest {
     record StringOption(@Option("d") String directory) {
     }
 
-    private static class Args {
-        public static <T> T parse(Class<T> optionsClass, String ...args) {
-            Constructor<?> constructor = optionsClass.getDeclaredConstructors()[0];
-            Object[] params = Arrays.stream(constructor.getParameters()).map(parameter -> parseOption(parameter, List.of(args))).toArray();
-            try {
-                return (T) constructor.newInstance(params);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        private static Object parseOption(Parameter parameter, List<String> args) {
-            Class<?> optionType = parameter.getType();
-            Option option = parameter.getAnnotation(Option.class);
-            String optionName = "-" + option.value();
-            if (optionType == int.class) {
-                return parseSingleValueWith(args, optionName, Integer::parseInt);
-            }
-            if (optionType == String.class) {
-                return parseSingleValueWith(args, optionName, Function.identity());
-            }
-            if (optionType == boolean.class) {
-                return args.contains(optionName);
-            }
-            throw new UnsupportedOperationException("unsupported for type " + optionType);
-        }
-
-        private static <T> T parseSingleValueWith(List<String> args, String optionName, Function<String, T> transfer) {
-            int optionIndex = args.indexOf(optionName);
-            int valueIndex = optionIndex + 1;
-            if (valueIndex >= args.size() || isValue(args, valueIndex)) {
-                throw new IllegalArgumentException(optionName + "expect to get a value");
-            }
-            int nextOptionIndex = optionIndex + 2;
-            if (nextOptionIndex < args.size() && !isValue(args, nextOptionIndex)) {
-                throw new IllegalArgumentException(optionName + "expect single value");
-            }
-            return transfer.apply(args.get(valueIndex));
-        }
-
-        private static boolean isValue(List<String> args, int valueIndex) {
-            return args.get(valueIndex).startsWith("-");
-        }
-
-    }
 }
