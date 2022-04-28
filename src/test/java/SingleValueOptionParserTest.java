@@ -32,4 +32,9 @@ class SingleValueOptionParserTest {
     public void should_throw_error_while_extra_value() {
         assertThrows(IllegalArgumentException.class, () -> intOptionParser.parse(List.of("-p", "8080", "8888"), "-p"));
     }
+
+    @Test
+    public void should_return_default_value_while_option_is_not_present() {
+        assertEquals(intOptionParser.parse(List.of(), "-p"), 0);
+    }
 }
