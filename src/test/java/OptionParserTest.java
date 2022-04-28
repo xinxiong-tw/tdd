@@ -4,9 +4,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class OptionParserTest {
 
@@ -65,6 +65,17 @@ class OptionParserTest {
         @Test
         public void should_throw_error_while_get_value() {
             assertThrows(IllegalArgumentException.class, () -> parser.parse(List.of("-l", "p"), "-l"));
+        }
+    }
+
+    @Nested
+    class ListOptionTest {
+        // -g "this" "is" {"this", "is"}
+        @Test
+        public void should_return_list_while_has_two_values() {
+            OptionParser<String[]> parser = OptionParser.list(Function.identity());
+            String[] values = parser.parse(List.of("-g", "this", "is"), "-g");
+            assertArrayEquals(values, new String[]{"this", "is"});
         }
     }
 

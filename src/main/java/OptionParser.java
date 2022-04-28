@@ -21,7 +21,7 @@ public interface OptionParser<T> {
         if (optionIndex == -1) {
             return Optional.empty();
         }
-        List<String> optionRawValues = OptionParser.getOptionRawValues(arguments, optionIndex + 1);
+        List<String> optionRawValues = getOptionRawValues(arguments, optionIndex + 1);
         if (optionRawValues.size() < valueCount) {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
         }
@@ -32,13 +32,18 @@ public interface OptionParser<T> {
     }
 
     static OptionParser<Boolean> bool() {
-        return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 0).isPresent();
+        return (arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 0).isPresent();
     }
 
     static <T> OptionParser<T> unary(T defaultValue, Function<String, T> parser) {
-        return (arguments, optionName) -> OptionParser.getAndCheckValueCount(arguments, optionName, 1)
+        return (arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 1)
                 .map(values -> parser.apply(values.get(0)))
                 .orElse(defaultValue);
+    }
+
+    static <T> OptionParser<T[]> list(Function<String, T> parser) {
+//        return ((arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 2));
+        return null;
     }
 
     T parse(List<String> arguments, String optionName);
