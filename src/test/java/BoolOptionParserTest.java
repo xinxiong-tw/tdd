@@ -24,7 +24,7 @@ class BoolOptionParserTest {
 
     @Test
     public void should_throw_error_while_get_value() {
-        assertThrows(IllegalArgumentException.class, () -> Args.parse(BoolOptions.class, "-l p"));
+        assertThrows(IllegalArgumentException.class, () -> Args.parse(BoolOptions.class, "-l", "p"));
     }
 
     record BoolOptions(@Option("l") boolean logging) {
