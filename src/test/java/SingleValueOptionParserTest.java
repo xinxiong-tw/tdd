@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SingleValueOptionParserTest {
 
-    private final SingleValueOptionParser<Integer> intOptionParser = new SingleValueOptionParser<>(Integer::parseInt, 0);
+    private final SingleValueOptionParser<Integer> intOptionParser = new SingleValueOptionParser<>(0, Integer::parseInt);
 
     // single value
     @Test

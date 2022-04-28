@@ -6,7 +6,7 @@ class SingleValueOptionParser<T> implements OptionParser<T> {
     private final Function<String, T> parser;
     private final T defaultValue;
 
-    public SingleValueOptionParser(Function<String, T> parser, T defaultValue) {
+    public SingleValueOptionParser(T defaultValue, Function<String, T> parser) {
         this.parser = parser;
         this.defaultValue = defaultValue;
     }
