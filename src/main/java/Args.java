@@ -20,6 +20,9 @@ class Args {
     private static Object parseOption(Parameter parameter, List<String> args) {
         Class<?> optionType = parameter.getType();
         Option option = parameter.getAnnotation(Option.class);
+        if (option == null) {
+            throw new IllegalArgumentException(parameter.getName() + " must have a option annotation");
+        }
         String optionName = "-" + option.value();
         OptionParser<?> parser = getOptionParser(optionType);
         return Optional.ofNullable(parser)
