@@ -23,4 +23,13 @@ public class ArgsTest {
     record NoOptionOptions(boolean logging) {
     }
 
+
+    @Test
+    public void should_support_list_options() {
+        ListOptions options = Args.parse(ListOptions.class, "-g", "this", "is");
+        assertArrayEquals(options.names(), new String[] {"this", "is"});
+    }
+
+    record ListOptions(@Option("g") String[] names) {
+    }
 }
