@@ -77,6 +77,23 @@ class OptionParserTest {
             String[] values = parser.parse(List.of("-g", "this", "is"), "-g");
             assertArrayEquals(values, new String[]{"this", "is"});
         }
+
+        @Test
+        public void should_return_empty_array_while_no_option() {
+            OptionParser<String[]> parser = OptionParser.list(String[]::new, Function.identity());
+            String[] values = parser.parse(List.of(), "-g");
+            assertEquals(values.length, 0);
+        }
+
+        @Test
+        public void should_throw_error_while_parse_error() {
+            Function<String, String> parseFunction = it -> {
+                throw new IllegalArgumentException();
+            };
+            OptionParser<String[]> parser = OptionParser.list(String[]::new, parseFunction);
+
+            assertThrows(IllegalArgumentException.class, () -> parser.parse(List.of("-g", "this", "is"), "-g"));
+        }
     }
 
 }
