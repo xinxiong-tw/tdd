@@ -73,7 +73,7 @@ class OptionParserTest {
         // -g "this" "is" {"this", "is"}
         @Test
         public void should_return_list_while_has_two_values() {
-            OptionParser<String[]> parser = OptionParser.list(Function.identity());
+            OptionParser<String[]> parser = OptionParser.list(String[]::new, Function.identity());
             String[] values = parser.parse(List.of("-g", "this", "is"), "-g");
             assertArrayEquals(values, new String[]{"this", "is"});
         }
