@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-class Args<T> {
+class Args {
 
     public static Map<String, String[]> parse(List<String> arguments) {
         HashMap<String, List<String>> hashMap = new HashMap<>();

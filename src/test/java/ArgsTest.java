@@ -16,4 +16,11 @@ public class ArgsTest {
         assertArrayEquals(map.get("l"), new String[] {});
         assertArrayEquals(map.get("d"), new String[] {"/usr/log"});
     }
+
+    @Test
+    public void should_return_map_with_list_option_after_parse_list_arguments() {
+        Map<String, String[]> map = Args.parse(List.of("-g", "hello", "world"));
+
+        assertArrayEquals(map.get("g"), new String[] {"hello", "world"});
+    }
 }
