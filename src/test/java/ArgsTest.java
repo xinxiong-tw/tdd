@@ -25,11 +25,27 @@ public class ArgsTest {
 
 
     @Test
-    public void should_support_list_options() {
-        ListOptions options = Args.parse(ListOptions.class, "-g", "this", "is");
+    public void should_support_string_list_options() {
+        StringListOptions options = Args.parse(StringListOptions.class, "-g", "this", "is");
         assertArrayEquals(options.names(), new String[] {"this", "is"});
     }
 
-    record ListOptions(@Option("g") String[] names) {
+    record StringListOptions(@Option("g") String[] names) {
     }
+
+    @Test
+    public void should_support_int_list_options() {
+        IntListOptions options = Args.parse(IntListOptions.class, "-g", "1", "2");
+        assertArrayEquals(options.flags(), new Integer[]{1, 2});
+    }
+
+    @Test
+    public void should_support_negative_int_list_options() {
+        IntListOptions options = Args.parse(IntListOptions.class, "-g", "-1", "-2");
+        assertArrayEquals(options.flags(), new Integer[]{-1, -2});
+    }
+
+    record IntListOptions(@Option("g") Integer[] flags) {
+    }
+
 }
