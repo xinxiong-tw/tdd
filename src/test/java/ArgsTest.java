@@ -6,7 +6,7 @@ public class ArgsTest {
     // -l -p 8080 -d /usr/logs
     @Test
     public void should_parse_multiple_options_one_time() {
-        LogOptions options = Args.parse(LogOptions.class, "-l", "-p", "8080", "-d", "/usr/logs");
+        LogOptions options = new Args<>(LogOptions.class).parse("-l", "-p", "8080", "-d", "/usr/logs");
         assertTrue(options.logging());
         assertEquals(options.port(), 8080);
         assertEquals(options.directory, "/usr/logs");
@@ -17,7 +17,7 @@ public class ArgsTest {
 
     @Test
     public void should_throw_error_while_no_option_annotation() {
-        assertThrows(IllegalArgumentException.class, () -> Args.parse(NoOptionOptions.class, "-l"));
+        assertThrows(IllegalArgumentException.class, () -> new Args<>(NoOptionOptions.class).parse("-l"));
     }
 
     record NoOptionOptions(boolean logging) {
@@ -26,7 +26,7 @@ public class ArgsTest {
 
     @Test
     public void should_support_string_list_options() {
-        StringListOptions options = Args.parse(StringListOptions.class, "-g", "this", "is");
+        StringListOptions options = new Args<>(StringListOptions.class).parse("-g", "this", "is");
         assertArrayEquals(options.names(), new String[] {"this", "is"});
     }
 
@@ -35,13 +35,13 @@ public class ArgsTest {
 
     @Test
     public void should_support_int_list_options() {
-        IntListOptions options = Args.parse(IntListOptions.class, "-g", "1", "2");
+        IntListOptions options = new Args<>(IntListOptions.class).parse("-g", "1", "2");
         assertArrayEquals(options.flags(), new Integer[]{1, 2});
     }
 
     @Test
     public void should_support_negative_int_list_options() {
-        IntListOptions options = Args.parse(IntListOptions.class, "-g", "-1", "-2");
+        IntListOptions options = new Args<>(IntListOptions.class).parse("-g", "-1", "-2");
         assertArrayEquals(options.flags(), new Integer[]{-1, -2});
     }
 
