@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
 public interface OptionParser<T> {
 
     private static boolean isOption(String arg) {
-        return arg.startsWith("-");
+        return arg.matches("^-[a-zA-Z-]+$");
     }
 
     private static List<String> getOptionRawValues(List<String> arguments, int valueIndex) {

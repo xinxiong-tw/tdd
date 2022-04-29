@@ -34,7 +34,8 @@ class Args {
             int.class, OptionParser.unary(0, Integer::parseInt),
             String.class, OptionParser.unary("", Function.identity()),
             boolean.class, OptionParser.bool(),
-            String[].class, OptionParser.list(String[]::new, Function.identity())
+            String[].class, OptionParser.list(String[]::new, Function.identity()),
+            Integer[].class, OptionParser.list(Integer[]::new, Integer::parseInt)
     );
 
     private static OptionParser<?> getOptionParser(Class<?> optionType) {
