@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.IntStream;
 
 public interface OptionParser<T> {
@@ -16,34 +17,44 @@ public interface OptionParser<T> {
                 .orElse(arguments.size()));
     }
 
-    private static Optional<List<String>> getAndCheckValueCount(List<String> arguments, String optionName, int valueCount) {
+    private static Optional<List<String>> getRawValues(List<String> arguments, String optionName) {
         int optionIndex = arguments.indexOf(optionName);
         if (optionIndex == -1) {
             return Optional.empty();
         }
         List<String> optionRawValues = getOptionRawValues(arguments, optionIndex + 1);
+        return Optional.of(optionRawValues);
+    }
+
+    private static List<String> checkValueCount(String optionName, int valueCount, List<String> optionRawValues) {
         if (optionRawValues.size() < valueCount) {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
         }
         if (optionRawValues.size() > valueCount) {
             throw new IllegalArgumentException(optionName + " expect to get " + valueCount + " value");
         }
-        return Optional.of(optionRawValues);
+        return optionRawValues;
     }
 
     static OptionParser<Boolean> bool() {
-        return (arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 0).isPresent();
+        return (arguments, optionName) -> getRawValues(arguments, optionName)
+                .map(values -> checkValueCount(optionName, 0, values))
+                .isPresent();
     }
 
     static <T> OptionParser<T> unary(T defaultValue, Function<String, T> parser) {
-        return (arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 1)
+        return (arguments, optionName) -> getRawValues(arguments, optionName)
+                .map(values -> checkValueCount(optionName, 1, values))
                 .map(values -> parser.apply(values.get(0)))
                 .orElse(defaultValue);
     }
 
-    static <T> OptionParser<T[]> list(Function<String, T> parser) {
-//        return ((arguments, optionName) -> getAndCheckValueCount(arguments, optionName, 2));
-        return null;
+    static <T> OptionParser<T[]> list(IntFunction<T[]> generator, Function<String, T> parser) {
+        return ((arguments, optionName) -> getRawValues(arguments, optionName)
+                .map(values -> values.stream()
+                        .map(parser)
+                        .toArray(generator)
+                ).orElse(generator.apply(0)));
     }
 
     T parse(List<String> arguments, String optionName);
