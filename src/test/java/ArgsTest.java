@@ -97,6 +97,13 @@ public class ArgsTest {
     record StringOption(@Option("d") String directory) {
     }
 
+    @Test
+    public void should_return_multiple_options_after_parse_arguments() {
+        Options option = Args.parse(Options.class, new String[]{"-d", "/usr/log", "-p", "8080", "-l"});
+        assertEquals(option.directory(), "/usr/log");
+        assertTrue(option.logging());
+        assertEquals(option.port(), 8080);
+    }
     record Options(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
