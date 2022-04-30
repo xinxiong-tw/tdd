@@ -39,6 +39,15 @@ public class ArgsTest {
     record BoolOption(@Option("l") boolean logging) {
     }
 
+    @Test
+    public void should_return_8080_after_parse_int_option() {
+        IntOption option = Args.parse(IntOption.class, new String[]{"-p", "8080"});
+        assertEquals(option.port(), 8080);
+    }
+
+    record IntOption(@Option("p") int port) {
+    }
+
     record Options(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
