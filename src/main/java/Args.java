@@ -1,9 +1,6 @@
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
-import java.rmi.UnexpectedException;
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,23 +30,28 @@ class Args {
         Map<String, String[]> argsMap = toMap(List.of(args));
         Constructor<?> constructor = optionClass.getDeclaredConstructors()[0];
         Parameter[] parameters = constructor.getParameters();
-        Object[] params = Arrays.stream(parameters).map(parameter -> {
-            Option option = parameter.getAnnotation(Option.class);
-            String optionName = option.value();
-            String[] optionValues = argsMap.get(optionName);
-            Class<?> optionType = parameter.getType();
-            if (optionType == int.class) {
-                return Integer.parseInt(optionValues[0]);
-            }
-            if (optionType == String.class) {
-                return optionValues[0];
-            }
-            return optionValues != null;
-        }).toArray();
+        Object[] params = Arrays.stream(parameters).map(parameter -> parseValue(argsMap, parameter)).toArray();
         try {
             return (T) constructor.newInstance(params);
         } catch (Exception e) {
             throw new RuntimeException();
         }
     }
+
+    private static Object parseValue(Map<String, String[]> argsMap, Parameter parameter) {
+        Option option = parameter.getAnnotation(Option.class);
+        String optionName = option.value();
+        String[] optionValues = argsMap.get(optionName);
+        Class<?> optionType = parameter.getType();
+        return Optional.ofNullable(PARSERS.get(optionType))
+                .map(parser -> parser.parse(optionValues))
+                .orElseThrow(UnsupportedOperationException::new);
+    }
+
+    private static final Map<Class<?>, OptionParser<?>> PARSERS = Map.of(
+            int.class, new SingleValueOptionParser<>(Integer::parseInt),
+            String.class, new SingleValueOptionParser<>(String::valueOf),
+            boolean.class, new BoolOptionParser()
+    );
+
 }
