@@ -41,6 +41,9 @@ class Args {
             if (optionType == int.class) {
                 return Integer.parseInt(optionValues[0]);
             }
+            if (optionType == String.class) {
+                return optionValues[0];
+            }
             return optionValues != null;
         }).toArray();
         try {
