@@ -65,6 +65,12 @@ public class ArgsTest {
         assertEquals(tooManyArgumentsException.argument, "p");
     }
 
+    @Test
+    public void should_return_default_in_value_if_int_option_is_not_present() {
+        IntOption option = Args.parse(IntOption.class, new String[]{});
+        assertEquals(option.port(), 0);
+    }
+
     record IntOption(@Option("p") int port) {
     }
 
