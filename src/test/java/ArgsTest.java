@@ -42,6 +42,12 @@ public class ArgsTest {
         assertEquals(tooManyArgumentsException.argument, "l");
     }
 
+    @Test
+    public void should_return_false_if_option_not_present() {
+        BoolOption option = Args.parse(BoolOption.class, new String[]{""});
+        assertFalse(option.logging());
+    }
+
     record BoolOption(@Option("l") boolean logging) {
     }
 
