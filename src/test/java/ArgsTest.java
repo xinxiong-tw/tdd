@@ -57,6 +57,14 @@ public class ArgsTest {
         assertEquals(option.port(), 8080);
     }
 
+    @Test
+    public void should_throw_too_many_arguments_if_option_has_more_than_one_value() {
+        TooManyArgumentsException tooManyArgumentsException =
+                assertThrows(TooManyArgumentsException.class,
+                        () -> Args.parse(IntOption.class, new String[]{"-p", "8080", "9999"}));
+        assertEquals(tooManyArgumentsException.argument, "p");
+    }
+
     record IntOption(@Option("p") int port) {
     }
 
