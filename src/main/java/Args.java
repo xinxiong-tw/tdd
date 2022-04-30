@@ -1,7 +1,9 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
+import java.rmi.UnexpectedException;
+import java.util.*;
+import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -27,7 +29,20 @@ class Args {
         return hashMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toArray(String[]::new)));
     }
 
-    public static <T> T parse(Class<T> optionClass, String[] strings) {
-        return null;
+    public static <T> T parse(Class<T> optionClass, String[] args) {
+        Map<String, String[]> argsMap = toMap(List.of(args));
+        Constructor<?> constructor = optionClass.getDeclaredConstructors()[0];
+        Parameter[] parameters = constructor.getParameters();
+        Object[] params = Arrays.stream(parameters).map(parameter -> {
+            Option option = parameter.getAnnotation(Option.class);
+            String optionName = option.value();
+            String[] optionValues = argsMap.get(optionName);
+            return optionValues != null;
+        }).toArray();
+        try {
+            return (T) constructor.newInstance(params);
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
     }
 }
