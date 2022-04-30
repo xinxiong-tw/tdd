@@ -10,6 +10,9 @@ public class SingleValueOptionParser<T> implements OptionParser<T> {
 
     @Override
     public T parse(String optionName, String[] optionValues) {
+        if (optionValues.length != 1) {
+            throw new TooManyArgumentsException(optionName);
+        }
         String optionValue = optionValues[0];
         return parser.apply(optionValue);
     }
