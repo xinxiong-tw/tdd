@@ -37,6 +37,10 @@ class Args {
             Option option = parameter.getAnnotation(Option.class);
             String optionName = option.value();
             String[] optionValues = argsMap.get(optionName);
+            Class<?> optionType = parameter.getType();
+            if (optionType == int.class) {
+                return Integer.parseInt(optionValues[0]);
+            }
             return optionValues != null;
         }).toArray();
         try {
