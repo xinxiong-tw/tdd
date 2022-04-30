@@ -80,6 +80,14 @@ public class ArgsTest {
         assertEquals(option.directory(), "/usr/log");
     }
 
+    @Test
+    public void should_throw_too_many_arguments_if_option_has_more_than_one_string_values() {
+        TooManyArgumentsException tooManyArgumentsException =
+                assertThrows(TooManyArgumentsException.class,
+                        () -> Args.parse(StringOption.class, new String[]{"-d", "/usr/log", "/var/log"}));
+        assertEquals(tooManyArgumentsException.argument, "d");
+    }
+
     record StringOption(@Option("d") String directory) {
     }
 
