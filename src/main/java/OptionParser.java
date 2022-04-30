@@ -1,3 +1,3 @@
 public interface OptionParser<T> {
-    T parse(String[] optionValues);
+    T parse(String optionName, String[] optionValues);
 }

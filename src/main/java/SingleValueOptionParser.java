@@ -9,7 +9,7 @@ public class SingleValueOptionParser<T> implements OptionParser<T> {
     }
 
     @Override
-    public T parse(String[] optionValues) {
+    public T parse(String optionName, String[] optionValues) {
         String optionValue = optionValues[0];
         return parser.apply(optionValue);
     }

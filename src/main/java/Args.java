@@ -44,7 +44,7 @@ class Args {
         String[] optionValues = argsMap.get(optionName);
         Class<?> optionType = parameter.getType();
         return Optional.ofNullable(PARSERS.get(optionType))
-                .map(parser -> parser.parse(optionValues))
+                .map(parser -> parser.parse(optionName, optionValues))
                 .orElseThrow(UnsupportedOperationException::new);
     }
 
