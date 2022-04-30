@@ -88,6 +88,12 @@ public class ArgsTest {
         assertEquals(tooManyArgumentsException.argument, "d");
     }
 
+    @Test
+    public void should_return_default_in_value_if_string_option_is_not_present() {
+        StringOption option = Args.parse(StringOption.class, new String[]{});
+        assertEquals(option.directory(), "");
+    }
+
     record StringOption(@Option("d") String directory) {
     }
 
