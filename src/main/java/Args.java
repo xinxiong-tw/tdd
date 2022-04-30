@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 class Args {
 
-    public static Map<String, String[]> parse(List<String> arguments) {
+    public static Map<String, String[]> toMap(List<String> arguments) {
         HashMap<String, List<String>> hashMap = new HashMap<>();
         String regex = "^-([a-zA-Z-]+)$";
         Pattern pattern = Pattern.compile(regex);
@@ -27,4 +27,7 @@ class Args {
         return hashMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toArray(String[]::new)));
     }
 
+    public static <T> T parse(Class<T> optionClass, String[] strings) {
+        return null;
+    }
 }
