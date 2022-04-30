@@ -48,6 +48,15 @@ public class ArgsTest {
     record IntOption(@Option("p") int port) {
     }
 
+    @Test
+    public void should_return_string_after_parse_string_option() {
+        StringOption option = Args.parse(StringOption.class, new String[]{"-d", "/usr/log"});
+        assertEquals(option.directory(), "/usr/log");
+    }
+
+    record StringOption(@Option("d") String directory) {
+    }
+
     record Options(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
