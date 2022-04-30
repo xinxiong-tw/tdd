@@ -36,6 +36,12 @@ public class ArgsTest {
         assertTrue(option.logging());
     }
 
+    @Test
+    public void should_throw_error_if_too_many_arguments() {
+        TooManyArgumentsException tooManyArgumentsException = assertThrows(TooManyArgumentsException.class, () -> Args.parse(BoolOption.class, new String[]{"-l", "p"}));
+        assertEquals(tooManyArgumentsException.argument, "l");
+    }
+
     record BoolOption(@Option("l") boolean logging) {
     }
 
