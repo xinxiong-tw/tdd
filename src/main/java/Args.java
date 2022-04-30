@@ -10,20 +10,20 @@ class Args {
 
     public static Map<String, String[]> parse(List<String> arguments) {
         HashMap<String, List<String>> hashMap = new HashMap<>();
-        final String[] optionName = new String[1];
-        arguments.forEach(argument -> {
-            String regex = "^-([a-zA-Z-]+)$";
-            Pattern pattern = Pattern.compile(regex);
+        String regex = "^-([a-zA-Z-]+)$";
+        Pattern pattern = Pattern.compile(regex);
+        String optionName = "";
+        for (String argument : arguments) {
             Matcher matcher = pattern.matcher(argument);
             if (matcher.matches()) {
-                optionName[0] = matcher.group(1);
-                hashMap.put(optionName[0], new ArrayList<>());
-            } else if (!optionName[0].isEmpty()) {
-                List<String> values = hashMap.get(optionName[0]);
+                optionName = matcher.group(1);
+                hashMap.put(optionName, new ArrayList<>());
+            } else if (!optionName.isEmpty()) {
+                List<String> values = hashMap.get(optionName);
                 values.add(argument);
-                hashMap.put(optionName[0], values);
+                hashMap.put(optionName, values);
             }
-        });
+        }
         return hashMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toArray(String[]::new)));
     }
 
