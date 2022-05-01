@@ -4,14 +4,7 @@ public class BoolOptionParser implements OptionParser<Boolean> {
     @Override
     public Boolean parse(String optionName, String[] optionValues) {
         return Optional.ofNullable(optionValues)
-                .map(values -> checkCount(optionName, values))
+                .map(values -> OptionParser.checkCount(optionName, values, 0))
                 .isPresent();
-    }
-
-    private String[] checkCount(String optionName, String[] values) {
-        if (values.length != 0) {
-            throw new TooManyArgumentsException(optionName);
-        }
-        return values;
     }
 }

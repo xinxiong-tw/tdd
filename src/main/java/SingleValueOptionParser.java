@@ -14,7 +14,7 @@ public class SingleValueOptionParser<T> implements OptionParser<T> {
     @Override
     public T parse(String optionName, String[] optionValues) {
         return Optional.ofNullable(optionValues)
-                .map(values -> checkCount(optionName, values))
+                .map(values -> OptionParser.checkCount(optionName, values, 1))
                 .map(this::getValue)
                 .map(value -> parser.apply(value))
                 .orElse(defaultValue);
@@ -22,12 +22,5 @@ public class SingleValueOptionParser<T> implements OptionParser<T> {
 
     private String getValue(String[] values) {
         return values[0];
-    }
-
-    private String[] checkCount(String optionName, String[] optionValues) {
-        if (optionValues.length != 1) {
-            throw new TooManyArgumentsException(optionName);
-        }
-        return optionValues;
     }
 }
