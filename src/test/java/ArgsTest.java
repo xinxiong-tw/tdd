@@ -89,6 +89,14 @@ public class ArgsTest {
     }
 
     @Test
+    public void should_throw_too_less_arguments_if_option_has_not_enough_values() {
+        TooLessArgumentException tooLessArgumentException =
+                assertThrows(TooLessArgumentException.class,
+                        () -> Args.parse(StringOption.class, new String[]{"-d"}));
+        assertEquals(tooLessArgumentException.argument, "d");
+    }
+
+    @Test
     public void should_return_default_in_value_if_string_option_is_not_present() {
         StringOption option = Args.parse(StringOption.class, new String[]{});
         assertEquals(option.directory(), "");
