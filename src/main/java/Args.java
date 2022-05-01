@@ -34,6 +34,7 @@ class Args {
         try {
             return (T) constructor.newInstance(params);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException();
         }
     }
@@ -52,7 +53,9 @@ class Args {
             int.class, new SingleValueOptionParser<>(Integer::parseInt, 0),
             String.class, new SingleValueOptionParser<>(String::valueOf, ""),
             boolean.class, new BoolOptionParser(),
-            String[].class, new MultiValueOptionParser<>(String::valueOf, String[]::new)
+            String[].class, new MultiValueOptionParser<>(String::valueOf, String[]::new),
+            Integer[].class, new MultiValueOptionParser<>(Integer::parseInt, Integer[]::new)
     );
+
 
 }

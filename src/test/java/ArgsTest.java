@@ -119,10 +119,10 @@ public class ArgsTest {
     @Test
     public void should_return_int_list_values_after_parse_int_list() {
         IntListOption option = Args.parse(IntListOption.class, new String[]{"-g", "-1", "0", "1", "10"});
-        assertArrayEquals(new int[]{-1, 0, 1, 10}, option.numbers());
+        assertArrayEquals(new Integer[]{-1, 0, 1, 10}, option.numbers());
     }
 
-    record IntListOption(@Option("g") int[] numbers) {
+    record IntListOption(@Option("g") Integer[] numbers) {
     }
 
 
