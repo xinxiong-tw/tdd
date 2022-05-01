@@ -107,4 +107,13 @@ public class ArgsTest {
     record Options(@Option("l") boolean logging, @Option("p") int port, @Option("d") String directory) {
     }
 
+    @Test
+    public void should_return_list_string_values_after_parse_list_strings() {
+        ListOption option = Args.parse(ListOption.class, new String[]{"-g", "this", "is", "a", "list"});
+        assertArrayEquals(new String[]{"this", "is", "a", "list"}, option.groups());
+    }
+
+    record ListOption(@Option("g") String[] groups) {
+    }
+
 }
