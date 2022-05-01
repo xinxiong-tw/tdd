@@ -50,11 +50,11 @@ class Args {
     }
 
     private static final Map<Class<?>, OptionParser<?>> PARSERS = Map.of(
-            int.class, new SingleValueOptionParser<>(Integer::parseInt, 0),
-            String.class, new SingleValueOptionParser<>(String::valueOf, ""),
-            boolean.class, new BoolOptionParser(),
-            String[].class, new MultiValueOptionParser<>(String::valueOf, String[]::new),
-            Integer[].class, new MultiValueOptionParser<>(Integer::parseInt, Integer[]::new)
+            int.class, OptionParser.unary(Integer::parseInt, 0),
+            String.class, OptionParser.unary(String::valueOf, ""),
+            boolean.class, OptionParser.bool(),
+            String[].class, OptionParser.list(String::valueOf, String[]::new),
+            Integer[].class, OptionParser.list(Integer::parseInt, Integer[]::new)
     );
 
 
