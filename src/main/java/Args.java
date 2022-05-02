@@ -16,7 +16,9 @@ class Args {
             Matcher matcher = pattern.matcher(argument);
             if (matcher.matches()) {
                 optionName = matcher.group(1);
-                hashMap.put(optionName, new ArrayList<>());
+                if (!hashMap.containsKey(optionName)) {
+                    hashMap.put(optionName, new ArrayList<>());
+                }
             } else if (!optionName.isEmpty()) {
                 List<String> values = hashMap.get(optionName);
                 values.add(argument);
