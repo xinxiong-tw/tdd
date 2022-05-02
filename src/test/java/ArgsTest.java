@@ -143,7 +143,7 @@ public class ArgsTest {
 
     @Test
     public void should_support_full_name_of_option() {
-        FullNameOption option = Args.parse(FullNameOption.class, new String[]{"--port 8080"});
+        FullNameOption option = Args.parse(FullNameOption.class, new String[]{"--port", "8080"});
         assertEquals(8080, option.port());
     }
 
