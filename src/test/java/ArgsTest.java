@@ -33,8 +33,13 @@ public class ArgsTest {
         @Test
         public void should_return_map_with_full_name_option_after_parse_list_arguments() {
             Map<String, String[]> map = Args.toMap(List.of("--port", "8080"));
-
             assertArrayEquals(map.get("port"), new String[] {"8080"});
+        }
+
+        @Test
+        public void should_support_multi_same_name_option() {
+            Map<String, String[]> map = Args.toMap(List.of("-e", "MYSQL_ALLOW_EMPTY_PASSWORD=yes", "-e", "MYSQL_DATABASE=test"));
+            assertArrayEquals(map.get("e"), new String[] {"MYSQL_ALLOW_EMPTY_PASSWORD=yes", "MYSQL_DATABASE=test"});
         }
     }
 
