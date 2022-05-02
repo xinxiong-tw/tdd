@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -157,6 +158,15 @@ public class ArgsTest {
     }
 
     record FullNameListOption(@Option(value = "n", fullName = "numbers") Integer[] numbers) {
+    }
+
+    @Test
+    public void should_parse_map_options() {
+        MapOption option = Args.parse(MapOption.class, new String[]{"-e", "MYSQL_ALLOW_EMPTY_PASSWORD=yes", "-e", "MYSQL_DATABASE=test"});
+        assertEquals(Map.of("MYSQL_ALLOW_EMPTY_PASSWORD", "yes", "MYSQL_DATABASE", "test"), option.settings());
+    }
+
+    record MapOption(@Option("e") Map<String, String> settings) {
     }
 
 
