@@ -44,22 +44,29 @@ class Args {
         String optionShortName = option.value();
         String optionFullName = option.fullName();
         String optionNameMapKey = optionShortName.isEmpty() ? optionFullName : optionShortName;
-        String[] optionValues = Optional.ofNullable(argsMap.get(optionShortName))
-                .map(Arrays::asList)
-                .map(values -> Optional.ofNullable(argsMap.get(optionFullName))
-                        .map(Arrays::asList)
-                        .map(fullNameValues -> {
-                            values.addAll(fullNameValues);
-                            return values;
-                        })
-                        .orElse(values)
-                )
-                .map(values -> values.toArray(String[]::new))
-                .orElse(null);
+        String[] optionValues = getValues(argsMap, optionShortName, optionFullName);
         Class<?> optionType = parameter.getType();
         return Optional.ofNullable(PARSERS.get(optionType))
                 .map(parser -> parser.parse(optionNameMapKey, optionValues))
                 .orElseThrow(UnsupportedOperationException::new);
+    }
+
+    private static String[] getValues(Map<String, String[]> argsMap, String optionShortName, String optionFullName) {
+        List<String> shortNameValues = Optional.ofNullable(argsMap.get(optionShortName))
+                .map(Arrays::asList)
+                .orElse(null);
+        List<String> fullNameValues = Optional.ofNullable(argsMap.get(optionFullName))
+                .map(Arrays::asList)
+                .orElse(null);
+        if (shortNameValues != null && fullNameValues != null) {
+            shortNameValues.addAll(fullNameValues);
+            return shortNameValues.toArray(String[]::new);
+        } else if (shortNameValues != null) {
+            return shortNameValues.toArray(String[]::new);
+        } else if (fullNameValues != null) {
+            return fullNameValues.toArray(String[]::new);
+        }
+        return null;
     }
 
     private static final Map<Class<?>, OptionParser<?>> PARSERS = Map.of(
