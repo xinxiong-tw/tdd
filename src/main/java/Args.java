@@ -9,7 +9,7 @@ class Args {
 
     public static Map<String, String[]> toMap(List<String> arguments) {
         HashMap<String, List<String>> hashMap = new HashMap<>();
-        String regex = "^-([a-zA-Z-]+)$";
+        String regex = "^--?([a-zA-Z]+)$";
         Pattern pattern = Pattern.compile(regex);
         String optionName = "";
         for (String argument : arguments) {
@@ -41,11 +41,24 @@ class Args {
 
     private static Object parseValue(Map<String, String[]> argsMap, Parameter parameter) {
         Option option = parameter.getAnnotation(Option.class);
-        String optionName = option.value();
-        String[] optionValues = argsMap.get(optionName);
+        String optionShortName = option.value();
+        String optionFullName = option.fullName();
+        String optionNameMapKey = optionShortName.isEmpty() ? optionFullName : optionShortName;
+        String[] optionValues = Optional.ofNullable(argsMap.get(optionShortName))
+                .map(Arrays::asList)
+                .map(values -> Optional.ofNullable(argsMap.get(optionFullName))
+                        .map(Arrays::asList)
+                        .map(fullNameValues -> {
+                            values.addAll(fullNameValues);
+                            return values;
+                        })
+                        .orElse(values)
+                )
+                .map(values -> values.toArray(String[]::new))
+                .orElse(null);
         Class<?> optionType = parameter.getType();
         return Optional.ofNullable(PARSERS.get(optionType))
-                .map(parser -> parser.parse(optionName, optionValues))
+                .map(parser -> parser.parse(optionNameMapKey, optionValues))
                 .orElseThrow(UnsupportedOperationException::new);
     }
 
