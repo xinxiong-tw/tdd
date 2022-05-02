@@ -1,8 +1,11 @@
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Parameter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -133,5 +136,13 @@ public class ArgsTest {
     record IntListOption(@Option("g") Integer[] numbers) {
     }
 
+    @Test
+    public void should_support_full_name_of_option() {
+        FullNameOption option = Args.parse(FullNameOption.class, new String[]{"--port 8080"});
+        assertEquals(8080, option.port());
+    }
+
+    record FullNameOption(@Option(value = "p", fullName = "port") int port) {
+    }
 
 }

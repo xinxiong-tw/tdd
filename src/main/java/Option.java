@@ -7,4 +7,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface Option {
     String value();
+
+    String fullName() default "";
 }
