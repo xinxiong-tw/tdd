@@ -150,4 +150,14 @@ public class ArgsTest {
     record FullNameOption(@Option(value = "p", fullName = "port") int port) {
     }
 
+    @Test
+    public void should_join_full_name_values_with_short_name_values_after_parse() {
+        FullNameListOption option = Args.parse(FullNameListOption.class, new String[]{"-n", "1", "2", "--numbers", "3"});
+        assertArrayEquals(new Integer[]{1, 2, 3}, option.numbers());
+    }
+
+    record FullNameListOption(@Option(value = "n", fullName = "numbers") Integer[] numbers) {
+    }
+
+
 }
