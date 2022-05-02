@@ -1,11 +1,8 @@
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +26,14 @@ public class ArgsTest {
             Map<String, String[]> map = Args.toMap(List.of("-g", "hello", "world"));
 
             assertArrayEquals(map.get("g"), new String[] {"hello", "world"});
+        }
+
+        // --port 8080
+        @Test
+        public void should_return_map_with_full_name_option_after_parse_list_arguments() {
+            Map<String, String[]> map = Args.toMap(List.of("--port", "8080"));
+
+            assertArrayEquals(map.get("port"), new String[] {"8080"});
         }
     }
 
