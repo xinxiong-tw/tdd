@@ -61,7 +61,7 @@ class Args {
                 continue;
             }
             if (values == null) {
-                values = optionValues;
+                values = new ArrayList<>(optionValues);
             } else {
                 values.addAll(optionValues);
             }
