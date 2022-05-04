@@ -1,4 +1,6 @@
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -34,6 +36,27 @@ public interface OptionParser<T> {
         return ((optionName, optionValues) -> Optional.ofNullable(optionValues)
                 .map(values -> OptionParser.checkCount(optionName, values, 0))
                 .isPresent());
+    }
+
+    static OptionParser<Map<String, String>> map() {
+        return ((optionName, optionValues) -> Optional.ofNullable(optionValues)
+                .map(values -> {
+                    if (values.length == 0) {
+                        throw new TooLessArgumentException(optionName);
+                    }
+                    return values;
+                })
+                .map(values -> {
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    for (String optionValue : values) {
+                        String[] split = optionValue.split("=", 2);
+                        String key = split[0];
+                        String value = split[1];
+                        hashMap.put(key, value);
+                    }
+                    return hashMap;
+                })
+                .orElse(new HashMap<>()));
     }
 
     T parse(String optionName, String[] optionValues);

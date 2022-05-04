@@ -76,7 +76,8 @@ class Args {
             String.class, OptionParser.unary(String::valueOf, ""),
             boolean.class, OptionParser.bool(),
             String[].class, OptionParser.list(String::valueOf, String[]::new),
-            Integer[].class, OptionParser.list(Integer::parseInt, Integer[]::new)
+            Integer[].class, OptionParser.list(Integer::parseInt, Integer[]::new),
+            Map.class, OptionParser.map()
     );
 
 
