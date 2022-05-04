@@ -171,6 +171,18 @@ public class ArgsTest {
         assertEquals(Map.of("MYSQL_ALLOW_EMPTY_PASSWORD", "yes", "MYSQL_DATABASE", "test"), option.settings());
     }
 
+    @Test
+    public void should_return_empty_map_options() {
+        MapOption option = Args.parse(MapOption.class, new String[]{});
+        assertEquals(Map.of(), option.settings());
+    }
+
+    @Test
+    public void should_throw_error_with_no_value() {
+        TooLessArgumentException tooLessArgumentException = assertThrows(TooLessArgumentException.class, () -> Args.parse(MapOption.class, new String[]{"-e"}));
+        assertEquals(tooLessArgumentException.argument, "e");
+    }
+
     record MapOption(@Option("e") Map<String, String> settings) {
     }
 
