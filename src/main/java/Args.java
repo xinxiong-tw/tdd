@@ -9,7 +9,7 @@ class Args {
 
     public static Map<String, String[]> toMap(List<String> arguments) {
         HashMap<String, List<String>> hashMap = new HashMap<>();
-        String regex = "^--?([a-zA-Z]+)$";
+        String regex = "^(--?[a-zA-Z]+)$";
         Pattern pattern = Pattern.compile(regex);
         String optionName = "";
         for (String argument : arguments) {
@@ -46,7 +46,7 @@ class Args {
         String optionShortName = option.value();
         String optionFullName = option.fullName();
         String optionNameMapKey = optionShortName.isEmpty() ? optionFullName : optionShortName;
-        String[] optionValues = getValues(argsMap, new String[]{optionShortName, optionFullName});
+        String[] optionValues = getValues(argsMap, new String[]{"-" + optionShortName, "--" + optionFullName});
         Class<?> optionType = parameter.getType();
         return Optional.ofNullable(PARSERS.get(optionType))
                 .map(parser -> parser.parse(optionNameMapKey, optionValues))

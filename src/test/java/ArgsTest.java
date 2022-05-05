@@ -1,7 +1,6 @@
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,29 +16,29 @@ public class ArgsTest {
 
             Map<String, String[]> map = Args.toMap(List.of("-p", "8080", "-l", "-d", "/usr/log"));
 
-            assertArrayEquals(map.get("p"), new String[] {"8080"});
-            assertArrayEquals(map.get("l"), new String[] {});
-            assertArrayEquals(map.get("d"), new String[] {"/usr/log"});
+            assertArrayEquals(map.get("-p"), new String[] {"8080"});
+            assertArrayEquals(map.get("-l"), new String[] {});
+            assertArrayEquals(map.get("-d"), new String[] {"/usr/log"});
         }
 
         @Test
         public void should_return_map_with_list_option_after_parse_list_arguments() {
             Map<String, String[]> map = Args.toMap(List.of("-g", "hello", "world"));
 
-            assertArrayEquals(map.get("g"), new String[] {"hello", "world"});
+            assertArrayEquals(map.get("-g"), new String[] {"hello", "world"});
         }
 
         // --port 8080
         @Test
         public void should_return_map_with_full_name_option_after_parse_list_arguments() {
             Map<String, String[]> map = Args.toMap(List.of("--port", "8080"));
-            assertArrayEquals(map.get("port"), new String[] {"8080"});
+            assertArrayEquals(map.get("--port"), new String[] {"8080"});
         }
 
         @Test
         public void should_support_multi_same_name_option() {
             Map<String, String[]> map = Args.toMap(List.of("-e", "MYSQL_ALLOW_EMPTY_PASSWORD=yes", "-e", "MYSQL_DATABASE=test"));
-            assertArrayEquals(map.get("e"), new String[] {"MYSQL_ALLOW_EMPTY_PASSWORD=yes", "MYSQL_DATABASE=test"});
+            assertArrayEquals(map.get("-e"), new String[] {"MYSQL_ALLOW_EMPTY_PASSWORD=yes", "MYSQL_DATABASE=test"});
         }
     }
 
@@ -77,6 +76,14 @@ public class ArgsTest {
                 assertThrows(TooManyArgumentsException.class,
                         () -> Args.parse(IntOption.class, new String[]{"-p", "8080", "9999"}));
         assertEquals(tooManyArgumentsException.argument, "p");
+    }
+
+    @Test
+    public void should_throw_too_less_arguments_if_option_has_no_value() {
+        TooLessArgumentException tooLessArgumentException =
+                assertThrows(TooLessArgumentException.class,
+                        () -> Args.parse(IntOption.class, new String[]{"-p"}));
+        assertEquals(tooLessArgumentException.argument, "p");
     }
 
     @Test
@@ -151,6 +158,13 @@ public class ArgsTest {
     public void should_support_full_name_of_option() {
         FullNameOption option = Args.parse(FullNameOption.class, new String[]{"--port", "8080"});
         assertEquals(8080, option.port());
+    }
+
+    // -p 8080
+    @Test
+    public void should_distinguish_full_name_and_short_name() {
+        FullNameOption option = Args.parse(FullNameOption.class, new String[]{"-port", "8080"});
+        assertEquals(0, option.port());
     }
 
     record FullNameOption(@Option(value = "p", fullName = "port") int port) {
