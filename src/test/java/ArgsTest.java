@@ -1,6 +1,7 @@
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
@@ -200,5 +201,28 @@ public class ArgsTest {
     record MapOption(@Option("e") Map<String, String> settings) {
     }
 
+    @Nested
+    class HelpMessageTest {
+
+        private PrintStream mockOut;
+        private final PrintStream systemOut = System.out;
+
+        @BeforeEach
+        void setUp() {
+            mockOut = Mockito.mock(PrintStream.class);
+            System.setOut(mockOut);
+        }
+
+        @AfterEach()
+        void tearDown() {
+            System.setOut(systemOut);
+        }
+
+        @Test
+        public void should_show_default_help_message() {
+            Args.parse(MapOption.class, new String[]{"-h"});
+            Mockito.verify(mockOut).println("-e settings");
+        }
+    }
 
 }
