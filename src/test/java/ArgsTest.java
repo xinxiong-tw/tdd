@@ -273,6 +273,16 @@ public class ArgsTest {
                 @Option(value = "d", fullName = "directory", description = "log file's directory") String directory
         ) {
         }
+
+        @Test
+        public void should_ignore_other_option_if_contains_help_command() {
+            MultipleAllOptions option = Args.parse(MultipleAllOptions.class, new String[]{"-p", "8080", "-h"});
+            assertEquals("""
+                    -p --port port to use
+                    -d --directory log file's directory
+                    """, outputStreamCaptor.toString());
+            assertNull(option);
+        }
     }
 
 }
