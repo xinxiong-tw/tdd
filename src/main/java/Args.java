@@ -32,16 +32,7 @@ class Args {
         Map<String, String[]> argsMap = toMap(List.of(args));
         Constructor<?> constructor = optionClass.getDeclaredConstructors()[0];
         Parameter[] parameters = constructor.getParameters();
-        if (argsMap.get("-h") != null) {
-            StringBuilder helpMessage = new StringBuilder();
-            Arrays.stream(parameters).forEach(parameter -> {
-                Option option = parameter.getAnnotation(Option.class);
-                String optionName = option.value();
-                helpMessage.append("-").append(optionName).append(" ").append(parameter.getName());
-            });
-            System.out.println(helpMessage);
-            return null;
-        }
+        if (showHelpMessageIfNeeded(argsMap, parameters)) return null;
         Object[] params = Arrays.stream(parameters).map(parameter -> parseValue(argsMap, parameter)).toArray();
         try {
             return (T) constructor.newInstance(params);
@@ -49,6 +40,25 @@ class Args {
             e.printStackTrace();
             throw new RuntimeException();
         }
+    }
+
+    private static boolean showHelpMessageIfNeeded(Map<String, String[]> argsMap, Parameter[] parameters) {
+        if (argsMap.get("-h") != null) {
+            StringBuilder helpMessage = new StringBuilder();
+            Arrays.stream(parameters).forEach(parameter -> {
+                Option option = parameter.getAnnotation(Option.class);
+                String optionName = option.value();
+                helpMessage.append("-").append(optionName);
+                String fullOptionName = option.fullName();
+                if (!fullOptionName.isEmpty()) {
+                    helpMessage.append(" --").append(fullOptionName);
+                }
+                helpMessage.append(" ").append(parameter.getName());
+            });
+            System.out.println(helpMessage);
+            return true;
+        }
+        return false;
     }
 
     private static Object parseValue(Map<String, String[]> argsMap, Parameter parameter) {
