@@ -48,10 +48,15 @@ class Args {
             Arrays.stream(parameters).forEach(parameter -> {
                 Option option = parameter.getAnnotation(Option.class);
                 String optionName = option.value();
-                helpMessage.append("-").append(optionName);
+                if (!optionName.isEmpty()) {
+                    helpMessage.append("-").append(optionName);
+                }
                 String fullOptionName = option.fullName();
                 if (!fullOptionName.isEmpty()) {
-                    helpMessage.append(" --").append(fullOptionName);
+                    if (!helpMessage.isEmpty()) {
+                        helpMessage.append(" ");
+                    }
+                    helpMessage.append("--").append(fullOptionName);
                 }
                 helpMessage.append(" ").append(parameter.getName());
             });
