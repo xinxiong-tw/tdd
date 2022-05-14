@@ -225,30 +225,53 @@ public class ArgsTest {
         @Test
         public void should_show_default_help_message() {
             Args.parse(MapOption.class, new String[]{"-h"});
-            assertEquals(outputStreamCaptor.toString(), "-e settings\n");
+            assertEquals("-e settings\n", outputStreamCaptor.toString());
         }
 
         @Test
         public void should_show_full_name_with_default_help_message() {
             Args.parse(FullNameOption.class, new String[]{"-h"});
-            assertEquals(outputStreamCaptor.toString(), "-p --port port\n");
+            assertEquals("-p --port port\n", outputStreamCaptor.toString());
         }
 
         @Test
         public void should_show_only_full_name_with_default_help_message() {
             Args.parse(OnlyFullNameOption.class, new String[]{"-h"});
-            assertEquals(outputStreamCaptor.toString(), "--port port\n");
+            assertEquals("--port port\n", outputStreamCaptor.toString());
         }
 
-        record OnlyFullNameOption(@Option(value = "", fullName = "port") int port) {}
+        record OnlyFullNameOption(@Option(fullName = "port", value = "") int port) {}
 
         @Test
         public void should_show_description() {
             Args.parse(OptionWithDescription.class, new String[]{"-h"});
-            assertEquals(outputStreamCaptor.toString(), "-p port to use\n");
+            assertEquals("-p port to use\n", outputStreamCaptor.toString());
         }
 
         record OptionWithDescription(@Option(value = "p", description = "port to use") int port) {
+        }
+
+        @Test
+        public void should_show_short_name_and_fullName_and_description() {
+            Args.parse(AllOption.class, new String[]{"-h"});
+            assertEquals("-p --port port to use\n", outputStreamCaptor.toString());
+        }
+
+        record AllOption(@Option(value = "p", fullName = "port", description = "port to use") int port) {}
+
+        @Test
+        public void should_show_multiple_option_help_message() {
+            Args.parse(MultipleAllOptions.class, new String[]{"-h"});
+            assertEquals("""
+                    -p --port port to use
+                    -d --directory log file's directory
+                    """, outputStreamCaptor.toString());
+        }
+
+        record MultipleAllOptions(
+                @Option(value = "p", fullName = "port", description = "port to use") int port,
+                @Option(value = "d", fullName = "directory", description = "log file's directory") String directory
+        ) {
         }
     }
 
