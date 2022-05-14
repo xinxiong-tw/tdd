@@ -233,6 +233,14 @@ public class ArgsTest {
             Args.parse(FullNameOption.class, new String[]{"-h"});
             assertEquals(outputStreamCaptor.toString(), "-p --port port\n");
         }
+
+        @Test
+        public void should_show_only_full_name_with_default_help_message() {
+            Args.parse(OnlyFullNameOption.class, new String[]{"-h"});
+            assertEquals(outputStreamCaptor.toString(), "--port port\n");
+        }
+
+        record OnlyFullNameOption(@Option(value = "", fullName = "port") int port) {}
     }
 
 }
