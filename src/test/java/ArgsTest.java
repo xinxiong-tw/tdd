@@ -1,6 +1,7 @@
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
@@ -204,13 +205,13 @@ public class ArgsTest {
     @Nested
     class HelpMessageTest {
 
-        private PrintStream mockOut;
+        private ByteArrayOutputStream outputStreamCaptor;
         private final PrintStream systemOut = System.out;
 
         @BeforeEach
         void setUp() {
-            mockOut = Mockito.mock(PrintStream.class);
-            System.setOut(mockOut);
+            outputStreamCaptor = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(outputStreamCaptor));
         }
 
         @AfterEach()
@@ -221,7 +222,7 @@ public class ArgsTest {
         @Test
         public void should_show_default_help_message() {
             Args.parse(MapOption.class, new String[]{"-h"});
-            Mockito.verify(mockOut).println("-e settings");
+            assertEquals(outputStreamCaptor.toString(), "-e settings\n");
         }
     }
 
