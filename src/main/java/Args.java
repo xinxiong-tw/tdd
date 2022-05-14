@@ -48,11 +48,19 @@ class Args {
             Arrays.stream(parameters).forEach(parameter -> {
                 Option option = parameter.getAnnotation(Option.class);
                 helpMessage.append(getOptionNameDescription(option));
-                helpMessage.append(" ").append(parameter.getName());
+                helpMessage.append(" ");
+                helpMessage.append(getOptionValueDescription(parameter));
             });
             System.out.println(helpMessage);
             return true;
         }).orElse(false);
+    }
+
+    private static String getOptionValueDescription(Parameter parameter) {
+        Option option = parameter.getAnnotation(Option.class);
+        String optionDescription = option.description();
+        String name = parameter.getName();
+        return optionDescription.isEmpty() ? name : optionDescription;
     }
 
     private static String getOptionNameDescription(Option option) {
