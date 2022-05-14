@@ -7,12 +7,8 @@ import java.util.function.IntFunction;
 
 public interface OptionParser<T> {
     static String[] checkCount(String optionName, String[] optionValues, int count) {
-        if (optionValues.length < count) {
-            throw new TooLessArgumentException(optionName);
-        }
-        if (optionValues.length > count) {
-            throw new TooManyArgumentsException(optionName);
-        }
+        checkTooLessArgument(optionValues, optionName, count);
+        checkTooManyArgument(optionName, optionValues, count);
         return optionValues;
     }
 
@@ -41,12 +37,7 @@ public interface OptionParser<T> {
     static OptionParser<Map<String, String>> map() {
         return ((optionName, optionValues) -> Optional.ofNullable(optionValues)
                 .map(values -> {
-                    if (values.length == 0) {
-                        throw new TooLessArgumentException(optionName);
-                    }
-                    return values;
-                })
-                .map(values -> {
+                    checkTooLessArgument(values, optionName, 1);
                     HashMap<String, String> hashMap = new HashMap<>();
                     for (String optionValue : values) {
                         String[] split = optionValue.split("=", 2);
@@ -57,6 +48,18 @@ public interface OptionParser<T> {
                     return hashMap;
                 })
                 .orElse(new HashMap<>()));
+    }
+
+    private static void checkTooManyArgument(String optionName, String[] optionValues, int count) {
+        if (optionValues.length > count) {
+            throw new TooManyArgumentsException(optionName);
+        }
+    }
+
+    private static void checkTooLessArgument(String[] values, String optionName, int count) {
+        if (values.length < count) {
+            throw new TooLessArgumentException(optionName);
+        }
     }
 
     T parse(String optionName, String[] optionValues);
