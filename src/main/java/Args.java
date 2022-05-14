@@ -44,13 +44,12 @@ class Args {
 
     private static boolean showHelpMessageIfNeeded(Map<String, String[]> argsMap, Parameter[] parameters) {
         return Optional.ofNullable(argsMap.get("-h")).map(it -> {
-            StringBuilder helpMessage = new StringBuilder();
-            Arrays.stream(parameters).forEach(parameter -> {
+            String helpMessage = Arrays.stream(parameters).map(parameter -> {
                 Option option = parameter.getAnnotation(Option.class);
-                helpMessage.append(getOptionNameDescription(option));
-                helpMessage.append(" ");
-                helpMessage.append(getOptionValueDescription(parameter));
-            });
+                return getOptionNameDescription(option) +
+                        " " +
+                        getOptionValueDescription(parameter);
+            }).collect(Collectors.joining("\n"));
             System.out.println(helpMessage);
             return true;
         }).orElse(false);
