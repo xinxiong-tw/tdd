@@ -32,6 +32,16 @@ class Args {
         Map<String, String[]> argsMap = toMap(List.of(args));
         Constructor<?> constructor = optionClass.getDeclaredConstructors()[0];
         Parameter[] parameters = constructor.getParameters();
+        if (argsMap.get("-h") != null) {
+            StringBuilder helpMessage = new StringBuilder();
+            Arrays.stream(parameters).forEach(parameter -> {
+                Option option = parameter.getAnnotation(Option.class);
+                String optionName = option.value();
+                helpMessage.append("-").append(optionName).append(" ").append(parameter.getName());
+            });
+            System.out.println(helpMessage);
+            return null;
+        }
         Object[] params = Arrays.stream(parameters).map(parameter -> parseValue(argsMap, parameter)).toArray();
         try {
             return (T) constructor.newInstance(params);

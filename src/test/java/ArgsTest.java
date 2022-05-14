@@ -1,10 +1,13 @@
-import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +51,7 @@ public class ArgsTest {
     @Test
     public void should_return_true_after_parse_bool_option() {
         BoolOption option = Args.parse(BoolOption.class, new String[]{"-l"});
-        assertTrue(option.logging());
+        assertTrue(Objects.requireNonNull(option).logging());
     }
 
     @Test
@@ -60,7 +63,7 @@ public class ArgsTest {
     @Test
     public void should_return_false_if_option_not_present() {
         BoolOption option = Args.parse(BoolOption.class, new String[]{""});
-        assertFalse(option.logging());
+        assertFalse(Objects.requireNonNull(option).logging());
     }
 
     record BoolOption(@Option("l") boolean logging) {
@@ -69,7 +72,7 @@ public class ArgsTest {
     @Test
     public void should_return_8080_after_parse_int_option() {
         IntOption option = Args.parse(IntOption.class, new String[]{"-p", "8080"});
-        assertEquals(option.port(), 8080);
+        assertEquals(Objects.requireNonNull(option).port(), 8080);
     }
 
     @Test
@@ -91,7 +94,7 @@ public class ArgsTest {
     @Test
     public void should_return_default_in_value_if_int_option_is_not_present() {
         IntOption option = Args.parse(IntOption.class, new String[]{});
-        assertEquals(option.port(), 0);
+        assertEquals(Objects.requireNonNull(option).port(), 0);
     }
 
     record IntOption(@Option("p") int port) {
@@ -100,7 +103,7 @@ public class ArgsTest {
     @Test
     public void should_return_string_after_parse_string_option() {
         StringOption option = Args.parse(StringOption.class, new String[]{"-d", "/usr/log"});
-        assertEquals(option.directory(), "/usr/log");
+        assertEquals(Objects.requireNonNull(option).directory(), "/usr/log");
     }
 
     @Test
@@ -122,7 +125,7 @@ public class ArgsTest {
     @Test
     public void should_return_default_in_value_if_string_option_is_not_present() {
         StringOption option = Args.parse(StringOption.class, new String[]{});
-        assertEquals(option.directory(), "");
+        assertEquals(Objects.requireNonNull(option).directory(), "");
     }
 
     record StringOption(@Option("d") String directory) {
@@ -131,7 +134,7 @@ public class ArgsTest {
     @Test
     public void should_return_multiple_options_after_parse_arguments() {
         Options option = Args.parse(Options.class, new String[]{"-d", "/usr/log", "-p", "8080", "-l"});
-        assertEquals(option.directory(), "/usr/log");
+        assertEquals(Objects.requireNonNull(option).directory(), "/usr/log");
         assertTrue(option.logging());
         assertEquals(option.port(), 8080);
     }
@@ -141,7 +144,7 @@ public class ArgsTest {
     @Test
     public void should_return_list_string_values_after_parse_list_strings() {
         ListOption option = Args.parse(ListOption.class, new String[]{"-g", "this", "is", "a", "list"});
-        assertArrayEquals(new String[]{"this", "is", "a", "list"}, option.groups());
+        assertArrayEquals(new String[]{"this", "is", "a", "list"}, Objects.requireNonNull(option).groups());
     }
 
     record ListOption(@Option("g") String[] groups) {
@@ -150,7 +153,7 @@ public class ArgsTest {
     @Test
     public void should_return_int_list_values_after_parse_int_list() {
         IntListOption option = Args.parse(IntListOption.class, new String[]{"-g", "-1", "0", "1", "10"});
-        assertArrayEquals(new Integer[]{-1, 0, 1, 10}, option.numbers());
+        assertArrayEquals(new Integer[]{-1, 0, 1, 10}, Objects.requireNonNull(option).numbers());
     }
 
     record IntListOption(@Option("g") Integer[] numbers) {
@@ -159,14 +162,14 @@ public class ArgsTest {
     @Test
     public void should_support_full_name_of_option() {
         FullNameOption option = Args.parse(FullNameOption.class, new String[]{"--port", "8080"});
-        assertEquals(8080, option.port());
+        assertEquals(8080, Objects.requireNonNull(option).port());
     }
 
     // -p 8080
     @Test
     public void should_distinguish_full_name_and_short_name() {
         FullNameOption option = Args.parse(FullNameOption.class, new String[]{"-port", "8080"});
-        assertEquals(0, option.port());
+        assertEquals(0, Objects.requireNonNull(option).port());
     }
 
     record FullNameOption(@Option(value = "p", fullName = "port") int port) {
@@ -175,7 +178,7 @@ public class ArgsTest {
     @Test
     public void should_join_full_name_values_with_short_name_values_after_parse() {
         FullNameListOption option = Args.parse(FullNameListOption.class, new String[]{"-n", "1", "2", "--numbers", "3"});
-        assertArrayEquals(new Integer[]{1, 2, 3}, option.numbers());
+        assertArrayEquals(new Integer[]{1, 2, 3}, Objects.requireNonNull(option).numbers());
     }
 
     record FullNameListOption(@Option(value = "n", fullName = "numbers") Integer[] numbers) {
@@ -184,13 +187,13 @@ public class ArgsTest {
     @Test
     public void should_parse_map_options() {
         MapOption option = Args.parse(MapOption.class, new String[]{"-e", "MYSQL_ALLOW_EMPTY_PASSWORD=yes", "-e", "MYSQL_DATABASE=test"});
-        assertEquals(Map.of("MYSQL_ALLOW_EMPTY_PASSWORD", "yes", "MYSQL_DATABASE", "test"), option.settings());
+        assertEquals(Map.of("MYSQL_ALLOW_EMPTY_PASSWORD", "yes", "MYSQL_DATABASE", "test"), Objects.requireNonNull(option).settings());
     }
 
     @Test
     public void should_return_empty_map_options() {
         MapOption option = Args.parse(MapOption.class, new String[]{});
-        assertEquals(Map.of(), option.settings());
+        assertEquals(Map.of(), Objects.requireNonNull(option).settings());
     }
 
     @Test
