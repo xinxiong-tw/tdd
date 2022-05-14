@@ -227,6 +227,12 @@ public class ArgsTest {
             Args.parse(MapOption.class, new String[]{"-h"});
             assertEquals(outputStreamCaptor.toString(), "-e settings\n");
         }
+
+        @Test
+        public void should_show_full_name_with_default_help_message() {
+            Args.parse(FullNameOption.class, new String[]{"-h"});
+            assertEquals(outputStreamCaptor.toString(), "-p --port port\n");
+        }
     }
 
 }
