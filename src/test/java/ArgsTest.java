@@ -241,6 +241,15 @@ public class ArgsTest {
         }
 
         record OnlyFullNameOption(@Option(value = "", fullName = "port") int port) {}
+
+        @Test
+        public void should_show_description() {
+            Args.parse(OptionWithDescription.class, new String[]{"-h"});
+            assertEquals(outputStreamCaptor.toString(), "-p port to use\n");
+        }
+
+        record OptionWithDescription(@Option(value = "p", description = "port to use") int port) {
+        }
     }
 
 }

@@ -9,4 +9,6 @@ public @interface Option {
     String value();
 
     String fullName() default "";
+
+    String description() default "";
 }
