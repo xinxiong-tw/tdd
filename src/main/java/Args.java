@@ -43,27 +43,32 @@ class Args {
     }
 
     private static boolean showHelpMessageIfNeeded(Map<String, String[]> argsMap, Parameter[] parameters) {
-        if (argsMap.get("-h") != null) {
+        return Optional.ofNullable(argsMap.get("-h")).map(it -> {
             StringBuilder helpMessage = new StringBuilder();
             Arrays.stream(parameters).forEach(parameter -> {
                 Option option = parameter.getAnnotation(Option.class);
-                String optionName = option.value();
-                if (!optionName.isEmpty()) {
-                    helpMessage.append("-").append(optionName);
-                }
-                String fullOptionName = option.fullName();
-                if (!fullOptionName.isEmpty()) {
-                    if (!helpMessage.isEmpty()) {
-                        helpMessage.append(" ");
-                    }
-                    helpMessage.append("--").append(fullOptionName);
-                }
+                helpMessage.append(getOptionNameDescription(option));
                 helpMessage.append(" ").append(parameter.getName());
             });
             System.out.println(helpMessage);
             return true;
+        }).orElse(false);
+    }
+
+    private static String getOptionNameDescription(Option option) {
+        StringBuilder helpMessage = new StringBuilder();
+        String optionName = option.value();
+        if (!optionName.isEmpty()) {
+            helpMessage.append("-").append(optionName);
         }
-        return false;
+        String fullOptionName = option.fullName();
+        if (!fullOptionName.isEmpty()) {
+            if (!helpMessage.isEmpty()) {
+                helpMessage.append(" ");
+            }
+            helpMessage.append("--").append(fullOptionName);
+        }
+        return helpMessage.toString();
     }
 
     private static Object parseValue(Map<String, String[]> argsMap, Parameter parameter) {
